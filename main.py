@@ -15,7 +15,9 @@ zona1 = {"name": "zona1", "mx": 180, "my": 220, "sigmax": 10, "sigmay": 10}
 zona2 = {"name": "zona2", "mx": -100, "my": 110, "sigmax": 15, "sigmay": 10}
 zona3 = {"name": "zona3", "mx": 210, "my": -150, "sigmax": 5, "sigmay": 20}
 
-X, Y, culori, centroizi, cluster_dict= [], [], [], [], {}
+culori, centroizi, cluster_dict, W, X, poz_neuroni= [], [], {}, [], [], []
+omega = 0
+N = 20
 
 
 def alege_valoarea_pt_coord():
@@ -97,6 +99,35 @@ def calculCentruDeGreutate():
             centroizi.append((media_x, media_y))
         else:
             centroizi.append(centroid)
+
+
+def dateIntrare():
+    with open(file_name, 'r') as f:
+        for line in f:
+            coordonate = line.split()
+            punct = (int(coordonate[0]), int(coordonate[1]))
+            X.append(punct)
+
+
+def pozitionareNeuroni():
+    for i in range(-300, 300, 60):
+        for j in range(-300, 300, 60):
+            pozitie = (i,j)
+            poz_neuroni.append(pozitie)
+            W.append(pozitie)
+
+
+def coerficientInvatare(epoca_curenta):
+    invatare = 0.7 * pow(math.e, (-(epoca_curenta / N)))
+    return invatare
+
+
+def vecinatate(epoca_curenta):
+    vecinatate = 6.1 * pow(math.e, (-(epoca_curenta / N)))
+    return vecinatate
+
+
+def actualizarePonderi():
 
 # Generare puncte
 Zona = random.choice([zona1, zona2, zona3])
