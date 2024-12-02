@@ -15,10 +15,11 @@ zona1 = {"name": "zona1", "mx": 180, "my": 220, "sigmax": 10, "sigmay": 10}
 zona2 = {"name": "zona2", "mx": -100, "my": 110, "sigmax": 15, "sigmay": 10}
 zona3 = {"name": "zona3", "mx": 210, "my": -150, "sigmax": 5, "sigmay": 20}
 
-culori, centroizi, cluster_dict, W, X, poz_neuroni= [], [], {}, [], [], []
+culori, centroizi, cluster_dict, W, X, poz_neuroni = [], [], {}, [], [], []
 omega = 0
 N = 20
-
+int_max = float('inf')
+epoca_actuala = 1
 
 def alege_valoarea_pt_coord():
     return randint(-300, 300)
@@ -61,44 +62,8 @@ def verifPragx(x, zona):
         x = alege_valoarea_pt_coord()
         verifPragx(x, zona)
 
-
-def generareCentroizi():
-    k = nrOfCentroizi
-    while k > 0:
-        with open(centroizi_file_name, 'a') as f:
-            x, y = randint(-300, 300), randint(-300, 300)
-            centroizi.append((x, y))
-            cluster_dict[(x, y)] = []
-            f.write(f"{x} {y}\n")
-        k -= 1
-
 def distanta_Euclidiana(centroid, punct):
     return math.sqrt((centroid[0] - punct[0]) ** 2 + (centroid[1] - punct[1]) ** 2)
-
-
-def grupareDupaCentroid():
-    with open(file_name, 'r') as f:
-        for linie in f:
-            coordonate = linie.split()
-            punct = (int(coordonate[0]), int(coordonate[1]))
-            distanta_minima, centroid_apropiat = float('inf'), None
-            for centroid in centroizi:
-                distanta = distanta_Euclidiana(centroid, punct)
-                if distanta < distanta_minima:
-                    distanta_minima, centroid_apropiat = distanta, centroid
-            cluster_dict[centroid_apropiat].append(punct)
-
-
-def calculCentruDeGreutate():
-    temp = deepcopy(cluster_dict)
-    centroizi.clear()
-    for centroid, puncte in temp.items():
-        if puncte:
-            media_x, media_y = np.mean([p[0] for p in puncte]), np.mean([p[1] for p in puncte])
-            cluster_dict[(media_x, media_y)] = cluster_dict.pop(centroid)
-            centroizi.append((media_x, media_y))
-        else:
-            centroizi.append(centroid)
 
 
 def dateIntrare():
@@ -126,8 +91,29 @@ def vecinatate(epoca_curenta):
     vecinatate = 6.1 * pow(math.e, (-(epoca_curenta / N)))
     return vecinatate
 
+def actualizareNeuronCampion(neuron,neuronIndex, coeficient, punct):
+    neuronNou = []
+    neuronX = neuron[0] + coeficient * (punct[0] - neuron[0])
+    neuronY = neuron[1] + coeficient * (punct[1] - neuron[1])
+    W[neuronIndex] = (neuronX, neuronY)
 
-def actualizarePonderi():
+def isVecin(neuronIndex, neuronCampionIndex, epoca_curenta):
+    return distanta_Euclidiana(W[neuronCampionIndex], W[neuronIndex]) < vecinatate(epoca_curenta)
+
+
+def actualizarePonderi(puncte, neuroni):
+    dist = int_max
+    neuron_campion = 0
+    for punct in puncte:
+        for neuron in neuroni:
+            if distanta_Euclidiana(neuron,punct) < dist:
+                dist = distanta_Euclidiana(neuron,punct)
+                neuron_campion = neuroni.index(neuron)
+        actualizareNeuronCampion(poz_neuroni[neuron_campion],neuron_campion,coerficientInvatare(epoca_actuala),punct)
+        for neuron in neuroni:
+            if isVecin(W.index(neuron), neuron_campion, epoca_actuala):
+                actualizareNeuronCampion(poz_neuroni[W.index(neuron)],W.index(neuron),coerficientInvatare(epoca_actuala), punct)
+
 
 # Generare puncte
 Zona = random.choice([zona1, zona2, zona3])
