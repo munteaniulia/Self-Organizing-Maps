@@ -17,7 +17,7 @@ zona3 = {"name": "zona3", "mx": 210, "my": -150, "sigmax": 5, "sigmay": 20}
 
 W, X, poz_neuroni = [], [], []
 omega = 0
-N = 20
+N = 10
 int_max = float('inf')
 
 def alege_valoarea_pt_coord():
@@ -59,6 +59,7 @@ def verifPragx(x, zona):
 
 def distanta_Euclidiana(centroid, punct):
     return math.sqrt((centroid[0] - punct[0]) ** 2 + (centroid[1] - punct[1]) ** 2)
+    # return abs(centroid[0] - punct[0]) + abs(centroid[1] - punct[1])
 
 def dateIntrare():
     with open(file_name, 'r') as f:
@@ -76,6 +77,7 @@ def pozitionareNeuroni():
 
 def coerficientInvatare(epoca_curenta):
     invatare = 0.7 * pow(math.e, (-(epoca_curenta / N)))
+    print(f"{invatare} \n")
     return invatare
 
 def vecinatate(epoca_curenta):
@@ -88,6 +90,10 @@ def actualizareNeuron(neuron, neuronIndex, coeficient, punct):
     W[neuronIndex] = (neuronX, neuronY)
 
 def isVecin(neuronIndex, neuronCampionIndex, epoca_curenta):
+    neuronus = poz_neuroni[neuronIndex]
+    neuroncmp = poz_neuroni[neuronCampionIndex]
+    dist_euc = distanta_Euclidiana(poz_neuroni[neuronCampionIndex], poz_neuroni[neuronIndex])
+    veci = vecinatate(epoca_curenta)
     return distanta_Euclidiana(poz_neuroni[neuronCampionIndex], poz_neuroni[neuronIndex]) < vecinatate(epoca_curenta)
 
 def actualizarePonderi(puncte, neuroni, epoca_curenta):
@@ -98,53 +104,64 @@ def actualizarePonderi(puncte, neuroni, epoca_curenta):
         for neuron in neuroni:
             if distanta_Euclidiana(neuron,punct) < dist:
                 neuron_campion = neuron
+                dist = distanta_Euclidiana(neuron, punct)
                 neuron_campion_index = neuroni.index(neuron)
         actualizareNeuron(W[neuron_campion_index],neuron_campion_index,coerficientInvatare(epoca_curenta),punct)
         for neuron in neuroni:
-            if isVecin(neuroni.index(neuron), neuron_campion_index, epoca_curenta):
+            if neuron!= neuron_campion and isVecin(neuroni.index(neuron), neuron_campion_index, epoca_curenta):
                 actualizareNeuron(W[neuroni.index(neuron)],neuroni.index(neuron),coerficientInvatare(epoca_curenta), punct)
 
 def isDone(epoca_curetna):
     return coerficientInvatare(epoca_curetna) <= 10 ** -27
-
-def draw_grid(W, iteration):
-
-    plt.figure(figsize=(8, 8))
-    plt.title(f"Self-Organizing Map Grid - Iteration {iteration}")
-    plt.xlabel("X")
-    plt.ylabel("Y")
-
-    sorted_W = sorted(W, key=lambda pos: (pos[1], pos[0]))  # Sort by Y, then X
-    grid_size = int(np.sqrt(len(W)))  # Assuming a square grid
-
-    # Draw horizontal lines
-    for i in range(grid_size):
-        for j in range(grid_size - 1):
-            x1, y1 = sorted_W[i * grid_size + j]
-            x2, y2 = sorted_W[i * grid_size + j + 1]
-            plt.plot([x1, x2], [y1, y2], color='blue')
-
-    # Draw vertical lines
-    for j in range(grid_size):
-        for i in range(grid_size - 1):
-            x1, y1 = sorted_W[i * grid_size + j]
-            x2, y2 = sorted_W[(i + 1) * grid_size + j]
-            plt.plot([x1, x2], [y1, y2], color='blue')
-
-    plt.xlim(-350, 350)
-    plt.ylim(-350, 350)
-    plt.grid(True)
-    plt.show()
-
 
 # Main loop
 dateIntrare()
 pozitionareNeuroni()
 epoca_curenta = 1
 
+plt.figure()
+
+plt.scatter(*zip(*X), color='black', s=1, label='Puncte')
+
+for i in range(len(W)):
+    x, y = W[i]
+    if i % 10 != 9:
+        plt.plot([x, W[i + 1][0]], [y, W[i + 1][1]], color='gray', linestyle='--', linewidth=0.5)
+    if i + 10 < len(W):
+        plt.plot([x, W[i + 10][0]], [y, W[i + 10][1]], color='gray', linestyle='--', linewidth=0.5)
+
+plt.xlim(-350, 350)
+plt.ylim(-350, 350)
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.title(f"Epoca {0}")
+plt.grid(False)
+plt.pause(0.1)
+
 while not isDone(epoca_curenta):
     actualizarePonderi(X, poz_neuroni, epoca_curenta)
-    draw_grid(W, epoca_curenta)
+    plt.figure()
+
+    plt.scatter(*zip(*X), color='black', s=1, label='Puncte')
+
+    for i in range(len(W)):
+        x, y = W[i]
+        if i % 10 != 9:
+            plt.plot([x, W[i + 1][0]], [y, W[i + 1][1]], color='gray', linestyle='--', linewidth=0.5)
+        if i + 10 < len(W):
+            plt.plot([x, W[i + 10][0]], [y, W[i + 10][1]], color='gray', linestyle='--', linewidth=0.5)
+
+    plt.xlim(-300, 300)
+    plt.ylim(-300, 300)
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    plt.title(f"Epoca {epoca_curenta}")
+    plt.grid(False)
+
+    # Afișăm graficul
+    plt.pause(0.1)
     epoca_curenta += 1
-plt.ioff()
+
+# Afișăm toate figurile cumulate
 plt.show()
+
