@@ -1,0 +1,95 @@
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import math\r\nimport random\r\nfrom copy import deepcopy\r\nfrom random import randint\r\nimport sys\r\nimport numpy as np\r\n\r\nsys.setrecursionlimit(10000000)\r\n\r\nfile_name = 'coord_X_coord_Y_index_Zona.txt'\r\ncentroizi_file_name = \"Centroizi.txt\"\r\n\r\nnrOfCentroizi = randint(2, 10)\r\nzona1 = {\"name\": \"zona1\", \"mx\": 180, \"my\": 220, \"sigmax\": 10, \"sigmay\": 10}\r\nzona2 = {\"name\": \"zona2\", \"mx\": -100, \"my\": 110, \"sigmax\": 15, \"sigmay\": 10}\r\nzona3 = {\"name\": \"zona3\", \"mx\": 210, \"my\": -150, \"sigmax\": 5, \"sigmay\": 20}\r\n\r\nculori, centroizi, cluster_dict, W, X, poz_neuroni = [], [], {}, [], [], []\r\nomega = 0\r\nN = 20\r\nint_max = float('inf')\r\nepoca_actuala = 1\r\n\r\ndef alege_valoarea_pt_coord():\r\n    return randint(-300, 300)\r\n\r\n\r\ndef convertire(coord, zona, xORy):\r\n    return np.exp(-((zona[f\"m{xORy}\"] - coord) ** 2) / (2 * (zona[f\"sigma{xORy}\"] ** 2)))\r\n\r\n\r\ndef verificare_nr_puncte():\r\n    with open(file_name, 'r') as f:\r\n        numar_linii = len(f.readlines())\r\n    if numar_linii < 10000:\r\n        zona = random.choice([zona1, zona2, zona3])\r\n        x = alege_valoarea_pt_coord()\r\n        verifPragx(x, zona)\r\n\r\n\r\ndef verifPragy(y, zona):\r\n    yConvert = convertire(y, zona, \"y\")\r\n    prag = round(random.random(), 3)\r\n    if yConvert > prag:\r\n        with open(file_name, 'a') as f:\r\n            f.write(f\"{y} {zona['name']}\\n\")\r\n        verificare_nr_puncte()\r\n    else:\r\n        y = alege_valoarea_pt_coord()\r\n        verifPragy(y, zona)\r\n\r\n\r\ndef verifPragx(x, zona):\r\n    xConvert = convertire(x, zona, \"x\")\r\n    prag = round(random.random(), 3)\r\n    if xConvert > prag:\r\n        with open(file_name, 'a') as f:\r\n            f.write(f\"{x} \")\r\n        coordy = alege_valoarea_pt_coord()\r\n        verifPragy(coordy, zona)\r\n    else:\r\n        x = alege_valoarea_pt_coord()\r\n        verifPragx(x, zona)\r\n\r\ndef distanta_Euclidiana(centroid, punct):\r\n    return math.sqrt((centroid[0] - punct[0]) ** 2 + (centroid[1] - punct[1]) ** 2)\r\n\r\n\r\ndef dateIntrare():\r\n    with open(file_name, 'r') as f:\r\n        for line in f:\r\n            coordonate = line.split()\r\n            punct = (int(coordonate[0]), int(coordonate[1]))\r\n            X.append(punct)\r\n\r\n\r\ndef pozitionareNeuroni():\r\n    for i in range(-300, 300, 60):\r\n        for j in range(-300, 300, 60):\r\n            pozitie = (i,j)\r\n            poz_neuroni.append(pozitie)\r\n            W.append(pozitie)\r\n\r\n\r\ndef coerficientInvatare(epoca_curenta):\r\n    invatare = 0.7 * pow(math.e, (-(epoca_curenta / N)))\r\n    return invatare\r\n\r\n\r\ndef vecinatate(epoca_curenta):\r\n    vecinatate = 6.1 * pow(math.e, (-(epoca_curenta / N)))\r\n    return vecinatate\r\n\r\ndef actualizareNeuronCampion(neuron,neuronIndex, coeficient, punct):\r\n    neuronNou = []\r\n    neuronX = neuron[0] + coeficient * (punct[0] - neuron[0])\r\n    neuronY = neuron[1] + coeficient * (punct[1] - neuron[1])\r\n    W[neuronIndex] = (neuronX, neuronY)\r\n\r\ndef isVecin(neuronIndex, neuronCampionIndex, epoca_curenta):\r\n    return distanta_Euclidiana(W[neuronCampionIndex], W[neuronIndex]) < vecinatate(epoca_curenta)\r\n\r\n\r\ndef actualizarePonderi(puncte, neuroni):\r\n    dist = int_max\r\n    neuron_campion = 0\r\n    for punct in puncte:\r\n        for neuron in neuroni:\r\n            if distanta_Euclidiana(neuron,punct) < dist:\r\n                dist = distanta_Euclidiana(neuron,punct)\r\n                neuron_campion = neuroni.index(neuron)\r\n        actualizareNeuronCampion(poz_neuroni[neuron_campion],neuron_campion,coerficientInvatare(epoca_actuala),punct)\r\n        for neuron in neuroni:\r\n            if isVecin(W.index(neuron), neuron_campion, epoca_actuala):\r\n                actualizareNeuronCampion(poz_neuroni[W.index(neuron)],W.index(neuron),coerficientInvatare(epoca_actuala), punct)\r\n\r\n\r\n# Generare puncte\r\nZona = random.choice([zona1, zona2, zona3])\r\nx = alege_valoarea_pt_coord()\r\nverifPragx(x, Zona)\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main.py b/main.py
+--- a/main.py	(revision 335cf2787639f3dd1974d4671856e1145b3f1b1c)
++++ b/main.py	(date 1733212857208)
+@@ -98,7 +98,8 @@
+     W[neuronIndex] = (neuronX, neuronY)
+ 
+ def isVecin(neuronIndex, neuronCampionIndex, epoca_curenta):
+-    return distanta_Euclidiana(W[neuronCampionIndex], W[neuronIndex]) < vecinatate(epoca_curenta)
++    return distanta_Euclidiana(poz_neuroni[neuronCampionIndex], poz_neuroni[neuronIndex]) < vecinatate(epoca_curenta)
++    #return distanta_Euclidiana(W[neuronCampionIndex], W[neuronIndex]) < vecinatate(epoca_curenta)
+ 
+ 
+ def actualizarePonderi(puncte, neuroni):
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"87e9361e-869a-4e3d-83fd-8fb3d12609c3\" name=\"Changes\" comment=\"\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/Self-Organizing-Maps.iml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/Self-Organizing-Maps.iml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/misc.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/misc.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/main.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/main.py\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Python Script\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\">{\r\n  &quot;lastFilter&quot;: {\r\n    &quot;state&quot;: &quot;OPEN&quot;,\r\n    &quot;assignee&quot;: &quot;munteaniulia&quot;\r\n  }\r\n}</component>\r\n  <component name=\"GithubPullRequestsUISettings\"><![CDATA[{\r\n  \"selectedUrlAndAccountId\": {\r\n    \"url\": \"https://github.com/munteaniulia/Self-Organizing-Maps.git\",\r\n    \"accountId\": \"d73326f3-fc40-4838-8e30-a8623e523761\"\r\n  }\r\n}]]></component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;customColor&quot;: &quot;&quot;,\r\n  &quot;associatedIndex&quot;: 6\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2pdLQgGUeIgQbhrn2ZoZxlu2qK3\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"Python.main.executor\": \"Run\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"git-widget-placeholder\": \"main\",\r\n    \"node.js.detected.package.eslint\": \"true\",\r\n    \"node.js.detected.package.tslint\": \"true\",\r\n    \"node.js.selected.package.eslint\": \"(autodetect)\",\r\n    \"node.js.selected.package.tslint\": \"(autodetect)\",\r\n    \"nodejs_package_manager_path\": \"npm\",\r\n    \"settings.editor.selected.configurable\": \"com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable\",\r\n    \"vue.rearranger.settings.migration\": \"true\"\r\n  }\r\n}]]></component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-PY-242.23726.102\" />\r\n        <option value=\"bundled-python-sdk-5e1850174b45-399fe30bd8c1-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-242.23726.102\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"87e9361e-869a-4e3d-83fd-8fb3d12609c3\" name=\"Changes\" comment=\"\" />\r\n      <created>1733090991336</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1733090991336</updated>\r\n      <workItem from=\"1733167149067\" duration=\"3416000\" />\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 335cf2787639f3dd1974d4671856e1145b3f1b1c)
++++ b/.idea/workspace.xml	(date 1733212857395)
+@@ -4,9 +4,7 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="87e9361e-869a-4e3d-83fd-8fb3d12609c3" name="Changes" comment="">
+-      <change beforePath="$PROJECT_DIR$/.idea/Self-Organizing-Maps.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Self-Organizing-Maps.iml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
++    <list default="true" id="87e9361e-869a-4e3d-83fd-8fb3d12609c3" name="Changes" comment="actualizari ponderi neuroni">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+     </list>
+@@ -31,12 +29,12 @@
+     &quot;assignee&quot;: &quot;munteaniulia&quot;
+   }
+ }</component>
+-  <component name="GithubPullRequestsUISettings"><![CDATA[{
+-  "selectedUrlAndAccountId": {
+-    "url": "https://github.com/munteaniulia/Self-Organizing-Maps.git",
+-    "accountId": "d73326f3-fc40-4838-8e30-a8623e523761"
++  <component name="GithubPullRequestsUISettings">{
++  &quot;selectedUrlAndAccountId&quot;: {
++    &quot;url&quot;: &quot;https://github.com/munteaniulia/Self-Organizing-Maps.git&quot;,
++    &quot;accountId&quot;: &quot;d73326f3-fc40-4838-8e30-a8623e523761&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="ProjectColorInfo">{
+   &quot;customColor&quot;: &quot;&quot;,
+   &quot;associatedIndex&quot;: 6
+@@ -51,6 +49,7 @@
+     "Python.main.executor": "Run",
+     "RunOnceActivity.ShowReadmeOnStart": "true",
+     "git-widget-placeholder": "main",
++    "ignore.virus.scanning.warn.message": "true",
+     "node.js.detected.package.eslint": "true",
+     "node.js.detected.package.tslint": "true",
+     "node.js.selected.package.eslint": "(autodetect)",
+@@ -76,11 +75,25 @@
+       <option name="number" value="Default" />
+       <option name="presentableId" value="Default" />
+       <updated>1733090991336</updated>
+-      <workItem from="1733167149067" duration="3416000" />
++      <workItem from="1733167149067" duration="4730000" />
++      <workItem from="1733212396722" duration="457000" />
++    </task>
++    <task id="LOCAL-00001" summary="actualizari ponderi neuroni">
++      <option name="closed" value="true" />
++      <created>1733170604937</created>
++      <option name="number" value="00001" />
++      <option name="presentableId" value="LOCAL-00001" />
++      <option name="project" value="LOCAL" />
++      <updated>1733170604937</updated>
+     </task>
++    <option name="localTasksCounter" value="2" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+     <option name="version" value="3" />
+   </component>
++  <component name="VcsManagerConfiguration">
++    <MESSAGE value="actualizari ponderi neuroni" />
++    <option name="LAST_COMMIT_MESSAGE" value="actualizari ponderi neuroni" />
++  </component>
+ </project>
+\ No newline at end of file

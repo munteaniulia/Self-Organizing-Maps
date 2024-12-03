@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="87e9361e-869a-4e3d-83fd-8fb3d12609c3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/Self-Organizing-Maps.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Self-Organizing-Maps.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="87e9361e-869a-4e3d-83fd-8fb3d12609c3" name="Changes" comment="actualizari ponderi neuroni">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
@@ -23,6 +21,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -31,12 +34,12 @@
     &quot;assignee&quot;: &quot;munteaniulia&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/munteaniulia/Self-Organizing-Maps.git",
-    "accountId": "d73326f3-fc40-4838-8e30-a8623e523761"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/munteaniulia/Self-Organizing-Maps.git&quot;,
+    &quot;accountId&quot;: &quot;d73326f3-fc40-4838-8e30-a8623e523761&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 6
@@ -50,7 +53,8 @@
   "keyToString": {
     "Python.main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "afisare",
+    "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -76,11 +80,25 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1733090991336</updated>
-      <workItem from="1733167149067" duration="3416000" />
+      <workItem from="1733167149067" duration="4730000" />
+      <workItem from="1733212396722" duration="2527000" />
     </task>
+    <task id="LOCAL-00001" summary="actualizari ponderi neuroni">
+      <option name="closed" value="true" />
+      <created>1733170604937</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1733170604937</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="actualizari ponderi neuroni" />
+    <option name="LAST_COMMIT_MESSAGE" value="actualizari ponderi neuroni" />
   </component>
 </project>
