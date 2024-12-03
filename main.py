@@ -1,9 +1,9 @@
 import math
 import random
-from copy import deepcopy
 from random import randint
 import sys
 import numpy as np
+import matplotlib.pyplot as plt
 
 sys.setrecursionlimit(10000000)
 
@@ -15,11 +15,10 @@ zona1 = {"name": "zona1", "mx": 180, "my": 220, "sigmax": 10, "sigmay": 10}
 zona2 = {"name": "zona2", "mx": -100, "my": 110, "sigmax": 15, "sigmay": 10}
 zona3 = {"name": "zona3", "mx": 210, "my": -150, "sigmax": 5, "sigmay": 20}
 
-culori, centroizi, cluster_dict, W, X, poz_neuroni = [], [], {}, [], [], []
+W, X, poz_neuroni = [], [], []
 omega = 0
 N = 20
 int_max = float('inf')
-epoca_actuala = 1
 
 def alege_valoarea_pt_coord():
     return randint(-300, 300)
@@ -83,15 +82,15 @@ def vecinatate(epoca_curenta):
     vecinatate = 6.1 * pow(math.e, (-(epoca_curenta / N)))
     return vecinatate
 
-def actualizareNeuronCampion(neuron, neuronIndex, coeficient, punct):
+def actualizareNeuron(neuron, neuronIndex, coeficient, punct):
     neuronX = neuron[0] + coeficient * (punct[0] - neuron[0])
     neuronY = neuron[1] + coeficient * (punct[1] - neuron[1])
     W[neuronIndex] = (neuronX, neuronY)
 
 def isVecin(neuronIndex, neuronCampionIndex, epoca_curenta):
-    return distanta_Euclidiana(W[neuronCampionIndex], W[neuronIndex]) < vecinatate(epoca_curenta)
+    return distanta_Euclidiana(poz_neuroni[neuronCampionIndex], poz_neuroni[neuronIndex]) < vecinatate(epoca_curenta)
 
-def actualizarePonderi(puncte, neuroni):
+def actualizarePonderi(puncte, neuroni, epoca_curenta):
     neuron_campion = ()
     neuron_campion_index = 0
     for punct in puncte:
@@ -100,14 +99,52 @@ def actualizarePonderi(puncte, neuroni):
             if distanta_Euclidiana(neuron,punct) < dist:
                 neuron_campion = neuron
                 neuron_campion_index = neuroni.index(neuron)
-        actualizareNeuronCampion(poz_neuroni[neuron_campion_index],neuron_campion_index,coerficientInvatare(epoca_actuala),punct)
+        actualizareNeuron(W[neuron_campion_index],neuron_campion_index,coerficientInvatare(epoca_curenta),punct)
         for neuron in neuroni:
-            if isVecin(poz_neuroni.index(neuron), neuron_campion_index, epoca_actuala):
-                actualizareNeuronCampion(poz_neuroni[poz_neuroni.index(neuron)],poz_neuroni.index(neuron),coerficientInvatare(epoca_actuala), punct)
+            if isVecin(neuroni.index(neuron), neuron_campion_index, epoca_curenta):
+                actualizareNeuron(W[neuroni.index(neuron)],neuroni.index(neuron),coerficientInvatare(epoca_curenta), punct)
+
+def isDone(epoca_curetna):
+    return coerficientInvatare(epoca_curetna) <= 10 ** -27
+
+def draw_grid(W, iteration):
+
+    plt.figure(figsize=(8, 8))
+    plt.title(f"Self-Organizing Map Grid - Iteration {iteration}")
+    plt.xlabel("X")
+    plt.ylabel("Y")
+
+    sorted_W = sorted(W, key=lambda pos: (pos[1], pos[0]))  # Sort by Y, then X
+    grid_size = int(np.sqrt(len(W)))  # Assuming a square grid
+
+    # Draw horizontal lines
+    for i in range(grid_size):
+        for j in range(grid_size - 1):
+            x1, y1 = sorted_W[i * grid_size + j]
+            x2, y2 = sorted_W[i * grid_size + j + 1]
+            plt.plot([x1, x2], [y1, y2], color='blue')
+
+    # Draw vertical lines
+    for j in range(grid_size):
+        for i in range(grid_size - 1):
+            x1, y1 = sorted_W[i * grid_size + j]
+            x2, y2 = sorted_W[(i + 1) * grid_size + j]
+            plt.plot([x1, x2], [y1, y2], color='blue')
+
+    plt.xlim(-350, 350)
+    plt.ylim(-350, 350)
+    plt.grid(True)
+    plt.show()
 
 
-# Generare puncte
-Zona = random.choice([zona1, zona2, zona3])
-x = alege_valoarea_pt_coord()
-verifPragx(x, Zona)
+# Main loop
+dateIntrare()
+pozitionareNeuroni()
+epoca_curenta = 1
 
+while not isDone(epoca_curenta):
+    actualizarePonderi(X, poz_neuroni, epoca_curenta)
+    draw_grid(W, epoca_curenta)
+    epoca_curenta += 1
+plt.ioff()
+plt.show()
