@@ -84,7 +84,6 @@ def vecinatate(epoca_curenta):
     return vecinatate
 
 def actualizareNeuronCampion(neuron, neuronIndex, coeficient, punct):
-    neuronNou = []
     neuronX = neuron[0] + coeficient * (punct[0] - neuron[0])
     neuronY = neuron[1] + coeficient * (punct[1] - neuron[1])
     W[neuronIndex] = (neuronX, neuronY)
@@ -93,17 +92,18 @@ def isVecin(neuronIndex, neuronCampionIndex, epoca_curenta):
     return distanta_Euclidiana(W[neuronCampionIndex], W[neuronIndex]) < vecinatate(epoca_curenta)
 
 def actualizarePonderi(puncte, neuroni):
-    neuron_campion = 0
+    neuron_campion = ()
+    neuron_campion_index = 0
     for punct in puncte:
         dist = int_max
         for neuron in neuroni:
             if distanta_Euclidiana(neuron,punct) < dist:
                 neuron_campion = neuron
-                neuron_campion_index = neuroni.index(neuron)+
-        actualizareNeuronCampion(poz_neuroni[neuron_campion],neuron_campion,coerficientInvatare(epoca_actuala),punct)
+                neuron_campion_index = neuroni.index(neuron)
+        actualizareNeuronCampion(poz_neuroni[neuron_campion_index],neuron_campion_index,coerficientInvatare(epoca_actuala),punct)
         for neuron in neuroni:
-            if isVecin(W.index(neuron), neuron_campion, epoca_actuala):
-                actualizareNeuronCampion(poz_neuroni[W.index(neuron)],W.index(neuron),coerficientInvatare(epoca_actuala), punct)
+            if isVecin(poz_neuroni.index(neuron), neuron_campion_index, epoca_actuala):
+                actualizareNeuronCampion(W[poz_neuroni.index(neuron)],W.index(neuron),coerficientInvatare(epoca_actuala), punct)
 
 
 # Generare puncte
