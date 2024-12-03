@@ -103,7 +103,7 @@ def actualizarePonderi(puncte, neuroni):
         actualizareNeuronCampion(poz_neuroni[neuron_campion_index],neuron_campion_index,coerficientInvatare(epoca_actuala),punct)
         for neuron in neuroni:
             if isVecin(poz_neuroni.index(neuron), neuron_campion_index, epoca_actuala):
-                actualizareNeuronCampion(W[poz_neuroni.index(neuron)],W.index(neuron),coerficientInvatare(epoca_actuala), punct)
+                actualizareNeuronCampion(poz_neuroni[poz_neuroni.index(neuron)],poz_neuroni.index(neuron),coerficientInvatare(epoca_actuala), punct)
 
 
 # Generare puncte
