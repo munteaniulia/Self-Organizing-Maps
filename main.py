@@ -15,7 +15,7 @@ zona1 = {"name": "zona1", "mx": 180, "my": 220, "sigmax": 10, "sigmay": 10}
 zona2 = {"name": "zona2", "mx": -100, "my": 110, "sigmax": 15, "sigmay": 10}
 zona3 = {"name": "zona3", "mx": 210, "my": -150, "sigmax": 5, "sigmay": 20}
 
-W, X, poz_neuroni = [], [], []
+W, X, poz_neuroni, matrice =[], [], [], []
 omega = 0
 N = 10
 int_max = float('inf')
@@ -74,11 +74,10 @@ def pozitionareNeuroni():
             pozitie = (i,j)
             poz_neuroni.append(pozitie)
             W.append(pozitie)
-
 def coerficientInvatare(epoca_curenta):
     invatare = 0.7 * pow(math.e, (-(epoca_curenta / N)))
-    print(f"{invatare} \n")
-    return invatare
+    print(f"{round(invatare,2)} \n")
+    return round(invatare,2)
 
 def vecinatate(epoca_curenta):
     vecinatate = 6.1 * pow(math.e, (-(epoca_curenta / N)))
@@ -89,38 +88,49 @@ def actualizareNeuron(neuron, neuronIndex, coeficient, punct):
     neuronY = neuron[1] + coeficient * (punct[1] - neuron[1])
     W[neuronIndex] = (neuronX, neuronY)
 
-def isVecin(neuronIndex, neuronCampionIndex, epoca_curenta):
-    neuronus = poz_neuroni[neuronIndex]
-    neuroncmp = poz_neuroni[neuronCampionIndex]
-    dist_euc = distanta_Euclidiana(poz_neuroni[neuronCampionIndex], poz_neuroni[neuronIndex])
-    veci = vecinatate(epoca_curenta)
-    return distanta_Euclidiana(poz_neuroni[neuronCampionIndex], poz_neuroni[neuronIndex]) < vecinatate(epoca_curenta)
-
 def actualizarePonderi(puncte, neuroni, epoca_curenta):
     neuron_campion = ()
     neuron_campion_index = 0
     for punct in puncte:
         dist = int_max
         for neuron in neuroni:
-            if distanta_Euclidiana(neuron,punct) < dist:
+            if distanta_Euclidiana(neuron, punct) < dist:
                 neuron_campion = neuron
                 dist = distanta_Euclidiana(neuron, punct)
                 neuron_campion_index = neuroni.index(neuron)
-        actualizareNeuron(W[neuron_campion_index],neuron_campion_index,coerficientInvatare(epoca_curenta),punct)
-        for neuron in neuroni:
-            if neuron!= neuron_campion and isVecin(neuroni.index(neuron), neuron_campion_index, epoca_curenta):
-                actualizareNeuron(W[neuroni.index(neuron)],neuroni.index(neuron),coerficientInvatare(epoca_curenta), punct)
+        actualizareNeuron(W[neuron_campion_index], neuron_campion_index, coerficientInvatare(epoca_curenta), punct)
+
+        veci = int(round(vecinatate(epoca_curenta)))
+        for i, rand in enumerate(matrice):
+            for j, element in enumerate(rand):
+                if element == neuron_campion:
+                    for k in range(1, veci+1):
+                        # Verifică vecinii pe verticală
+                        if 0 <= i - k < len(matrice):
+                            actualizareNeuron(W[neuroni.index(matrice[i - k][j])],neuroni.index(matrice[i - k][j]), coerficientInvatare(epoca_curenta),punct)
+                        if 0 <= i + k < len(matrice):
+                            actualizareNeuron(W[neuroni.index(matrice[i + k][j])],neuroni.index(matrice[i + k][j]),coerficientInvatare(epoca_curenta),punct)
+                        # Verifică vecinii pe orizontală
+                        if 0 <= j - k < len(matrice[i]):
+                            actualizareNeuron(W[neuroni.index(matrice[i][j - k])],neuroni.index(matrice[i][j - k]),coerficientInvatare(epoca_curenta),punct)
+                        if 0 <= j + k < len(matrice[i]):
+                            actualizareNeuron(W[neuroni.index(matrice[i][j + k])],neuroni.index(matrice[i][j + k]),coerficientInvatare(epoca_curenta),punct)
 
 def isDone(epoca_curetna):
-    return coerficientInvatare(epoca_curetna) <= 10 ** -27
+    return round(coerficientInvatare(epoca_curetna), 2) <= 0.01
+
+# Generare puncte
+
+Zona = random.choice([zona1, zona2, zona3])
+x = alege_valoarea_pt_coord()
+verifPragx(x, Zona)
 
 # Main loop
 dateIntrare()
 pozitionareNeuroni()
-epoca_curenta = 1
-
-plt.figure()
-
+epoca_curenta = 0
+matrice = [poz_neuroni[i:i + 10] for i in range(0, len(poz_neuroni), 10)]
+plt.figure(figsize=(6, 6))
 plt.scatter(*zip(*X), color='black', s=1, label='Puncte')
 
 for i in range(len(W)):
@@ -140,8 +150,7 @@ plt.pause(0.1)
 
 while not isDone(epoca_curenta):
     actualizarePonderi(X, poz_neuroni, epoca_curenta)
-    plt.figure()
-
+    plt.figure(figsize=(6, 6))
     plt.scatter(*zip(*X), color='black', s=1, label='Puncte')
 
     for i in range(len(W)):
