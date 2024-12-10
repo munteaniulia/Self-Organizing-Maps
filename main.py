@@ -104,10 +104,27 @@ def actualizarePonderi(puncte, neuroni, epoca_curenta):
         for i, rand in enumerate(matrice):
             for j, element in enumerate(rand):
                 if element == neuron_campion:
-                    for k in range(1, veci+1):
+                    for k in range(1, veci + 1):
                         # Verifică vecinii pe verticală
                         if 0 <= i - k < len(matrice):
-                            actualizareNeuron(W[neuroni.index(matrice[i - k][j])],neuroni.index(matrice[i - k][j]), coerficientInvatare(epoca_curenta),punct)
+                            actualizareNeuron(W[neuroni.index(matrice[i - k][j])], neuroni.index(matrice[i - k][j]), coerficientInvatare(epoca_curenta), punct)
+                        if 0 <= i + k < len(matrice):
+                            actualizareNeuron(W[neuroni.index(matrice[i + k][j])], neuroni.index(matrice[i + k][j]), coerficientInvatare(epoca_curenta), punct)
+                        # Verifică vecinii pe orizontală
+                        if 0 <= j - k < len(matrice[i]):
+                            actualizareNeuron(W[neuroni.index(matrice[i][j - k])], neuroni.index(matrice[i][j - k]), coerficientInvatare(epoca_curenta), punct)
+                        if 0 <= j + k < len(matrice[i]):
+                            actualizareNeuron(W[neuroni.index(matrice[i][j + k])], neuroni.index(matrice[i][j + k]), coerficientInvatare(epoca_curenta), punct)
+                        # Verifică vecinii pe diagonale
+                        if 0 <= i - k < len(matrice) and 0 <= j - k < len(matrice[i]):
+                            actualizareNeuron(W[neuroni.index(matrice[i - k][j - k])], neuroni.index(matrice[i - k][j - k]), coerficientInvatare(epoca_curenta), punct)
+                        if 0 <= i - k < len(matrice) and 0 <= j + k < len(matrice[i]):
+                            actualizareNeuron(W[neuroni.index(matrice[i - k][j + k])], neuroni.index(matrice[i - k][j + k]), coerficientInvatare(epoca_curenta), punct)
+                        if 0 <= i + k < len(matrice) and 0 <= j - k < len(matrice[i]):
+                            actualizareNeuron(W[neuroni.index(matrice[i + k][j - k])], neuroni.index(matrice[i + k][j - k]), coerficientInvatare(epoca_curenta), punct)
+                        if 0 <= i + k < len(matrice) and 0 <= j + k < len(matrice[i]):
+                            actualizareNeuron(W[neuroni.index(matrice[i + k][j + k])], neuroni.index(matrice[i + k][j + k]), coerficientInvatare(epoca_curenta), punct)
+
                         if 0 <= i + k < len(matrice):
                             actualizareNeuron(W[neuroni.index(matrice[i + k][j])],neuroni.index(matrice[i + k][j]),coerficientInvatare(epoca_curenta),punct)
                         # Verifică vecinii pe orizontală
